@@ -1,0 +1,59 @@
+# Build results
+.vs
+bin/
+obj/
+out/
+$output/
+release/
+*.exe
+*.dll
+*.log
+*.vspscc
+*.vssscc
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / VSCode / JetBrains
+.idea/
+.vscode/
+*.sw?
+
+# NuGet packages
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Logs
+logs/
+*.log
+*.tlog
+
+# Publish
+*.pubxml
+*.publishsettings
+
+# Configuration
+#appsettings.*.json
+#!appsettings.Development.json
+
+# Secrets
+secrets.json
+
+# ignore everywhere
+appdata/
+app_data/
+
+# ignore repository root only
+/factory/
+
+# Other
+.env
+/.trash
+/.temp
