@@ -4,24 +4,50 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tiny ICO Generator</title>
 <style>
-:root{font-family:system-ui,Segoe UI,sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101522;color:#e9eef9;min-height:100vh;display:grid;place-items:center;padding:20px}main{width:min(100%,540px)}h1{margin:0 0 5px;font-size:25px}p{color:#aebad0;margin:0 0 20px}.drop{border:2px dashed #506184;border-radius:18px;padding:26px;text-align:center;background:#1b2436;cursor:pointer}.drop.over{border-color:#65b5ff;background:#233c58}.drop strong{display:block;font-size:18px}.drop small{display:block;margin:8px;color:#aebad0}input[type=file]{display:none}.btn{border:0;border-radius:10px;padding:12px 18px;background:#3a8bfa;color:white;font:inherit;font-weight:650;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.preview{display:grid;place-items:center;min-height:210px;margin:16px 0;border-radius:15px;background-color:#eee;background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}.preview img{max-width:190px;max-height:190px;object-fit:contain}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}.row input{background:#1b2436;color:white;border:1px solid #506184;border-radius:9px;padding:10px;min-width:0;flex:1}.sizes{font-size:13px;color:#aebad0}.status{font-size:13px;color:#8fe0af;min-height:20px}footer{font-size:12px;color:#8b97ac;text-align:center;margin-top:18px}
+:root{font-family:system-ui,Segoe UI,sans-serif;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101522;color:#e9eef9;min-height:100vh;display:grid;place-items:center;padding:20px}main{width:min(100%,540px)}h1{margin:0 0 5px;font-size:25px}p{color:#aebad0;margin:0 0 20px}.drop{border:2px dashed #506184;border-radius:18px;padding:26px;text-align:center;background:#1b2436;cursor:pointer}.drop.over{border-color:#65b5ff;background:#233c58}.preview.over{outline:3px dashed #65b5ff;outline-offset:-5px;filter:brightness(.9)}.drop strong{display:block;font-size:18px}.drop small{display:block;margin:8px;color:#aebad0}input[type=file]{display:none}.btn{border:0;border-radius:10px;padding:12px 18px;background:#3a8bfa;color:white;font:inherit;font-weight:650;cursor:pointer}.btn:disabled{opacity:.45;cursor:not-allowed}.preview{display:grid;place-items:center;min-height:210px;margin:16px 0;border-radius:15px;background-color:#eee;background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}.preview img{max-width:190px;max-height:190px;object-fit:contain}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}.row input{background:#1b2436;color:white;border:1px solid #506184;border-radius:9px;padding:10px;min-width:0;flex:1}.row select{background:#1b2436;color:white;border:1px solid #506184;border-radius:9px;padding:10px}.sizes{font-size:13px;color:#aebad0}.status{font-size:13px;color:#8fe0af;min-height:20px}footer{font-size:12px;color:#8b97ac;text-align:center;margin-top:18px}
+
+.export-panel{background:#192337;border:1px solid #354763;border-radius:14px;padding:16px;margin:14px 0}
+.export-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.export-heading strong{font-size:15px}
+.export-heading .sizes{line-height:1.5;text-align:right}
+.export-panel .btn{white-space:nowrap}
+.export-panel .btn.full{width:100%}
+.single-controls{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.single-controls label{color:#c5d2e9;white-space:nowrap}
+.single-controls select{min-width:105px}.single-controls input{width:90px;flex:none}.single-controls input[hidden]{display:none}
+.export-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.export-buttons .btn{padding:12px 8px}
+@media(max-width:520px){.export-heading{align-items:flex-start;flex-direction:column;gap:4px}.export-heading .sizes{text-align:left}.export-buttons{grid-template-columns:1fr}.single-controls{justify-content:space-between}}
 </style>
 </head>
 <!-- Trigger GitHub Pages deployment -->
 <body><main>
-<h1>🧩 Tiny ICO Generator</h1><p>Paste, drop, or select PNG / WebP → multi-size favicon.ico</p>
-<div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose or paste image"><strong>📋 Ctrl+V to paste an image</strong><small>Or drag & drop / click to choose PNG or WebP</small><button class="btn" type="button" id="choose">Choose Image</button><input id="file" type="file" accept="image/png,image/webp"></div>
+<h1>🧩 Tiny ICO Generator</h1><p>Paste, drop, or select an image → multi-size favicon.ico</p>
+<div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose or paste image"><strong>📋 Ctrl+V to paste an image</strong><small>Or drag & drop / click to choose an image</small><button class="btn" type="button" id="choose">Choose Image</button><input id="file" type="file" accept="image/*,.svg,.ico"></div>
 <div class="preview" id="preview"><span style="color:#667">Image preview</span></div>
 <div class="row"><label for="name">File name</label><input id="name" value="app-favicon" spellcheck="false"><span>.ico</span></div>
-<div class="row"><button class="btn" id="download" disabled>Download .ico</button><span class="sizes">16 · 24 · 32 · 48 · 64 · 128 · 256 px</span></div>
+<section class="export-panel" aria-label="Multi-size icon export">
+  <div class="export-heading"><strong>Multi-size ICO</strong><span class="sizes">16 · 24 · 32 · 48 · 64 · 128 · 256 px</span></div>
+  <button class="btn full" id="download" disabled>Download app.ico (Multi-size)</button>
+</section>
+<section class="export-panel" aria-label="Single-size export">
+  <div class="export-heading"><strong>Single-size Export</strong></div>
+  <div class="single-controls"><label for="size">Image size</label><select id="size"><option>16</option><option>24</option><option selected>32</option><option>48</option><option>64</option><option>128</option><option>256</option><option value="custom">Custom…</option></select><input id="customSize" type="number" min="1" max="256" step="1" value="220" aria-label="Custom image size in pixels" hidden><span class="sizes">× <span id="sizeText">32</span> px</span></div>
+  <div class="export-buttons">
+    <button class="btn" id="singleIco" disabled>Download ICO</button>
+    <button class="btn" id="png" disabled>Download PNG</button>
+    <button class="btn" id="webp" disabled>Download WebP</button>
+  </div>
+</section>
 <div class="status" id="status" aria-live="polite"></div><footer>Local-only · No upload · Transparency preserved</footer>
 </main>
 <script>
 const $=s=>document.querySelector(s), sizes=[16,24,32,48,64,128,256];
 let bitmap=null,previewUrl=null;
 const status=t=>$('#status').textContent=t;
+const isImage=f=>!!f && (f.type.startsWith('image/') || /\.(png|jpe?g|webp|gif|bmp|avif|svg|ico|tiff?)$/i.test(f.name||''));
 async function load(file){
- if(!file || !['image/png','image/webp'].includes(file.type)){status('Please select a PNG or WebP image.');return;}
+ if(!isImage(file)){status('Please select a supported image file.');return;}
  try{
   const next=await createImageBitmap(file);
   if(bitmap)bitmap.close();bitmap=next;
@@ -29,7 +55,7 @@ async function load(file){
   previewUrl=URL.createObjectURL(file);
   const img=document.createElement('img');img.src=previewUrl;img.alt='Source image';
   $('#preview').replaceChildren(img);
-  $('#download').disabled=false;
+  for(const id of ['download','singleIco','png','webp'])$('#'+id).disabled=false;
   status(`Ready: ${bitmap.width} × ${bitmap.height} px`);
  }catch(e){status('Could not open image: '+e.message)}
 }
@@ -37,31 +63,43 @@ $('#choose').onclick=e=>{e.stopPropagation();$('#file').click()};
 $('#drop').onclick=()=>$('#file').click();
 $('#drop').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#file').click()}};
 $('#file').onchange=e=>load(e.target.files[0]);
-$('#drop').ondragover=e=>{e.preventDefault();$('#drop').classList.add('over')};
-$('#drop').ondragleave=()=>$('#drop').classList.remove('over');
-$('#drop').ondrop=e=>{e.preventDefault();$('#drop').classList.remove('over');load([...e.dataTransfer.files].find(f=>['image/png','image/webp'].includes(f.type)))};
+for(const zone of [$('#drop'),$('#preview')]){
+ zone.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy';zone.classList.add('over')});
+ zone.addEventListener('dragleave',e=>{if(!zone.contains(e.relatedTarget))zone.classList.remove('over')});
+ zone.addEventListener('drop',e=>{
+  e.preventDefault();zone.classList.remove('over');
+  load([...e.dataTransfer.files].find(isImage));
+ });
+}
+// Prevent accidental browser navigation when a file is dropped outside either zone.
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>e.preventDefault());
 document.addEventListener('paste',e=>{
- const f=[...e.clipboardData.items].find(i=>i.type==='image/png'||i.type==='image/webp');
+ const f=[...e.clipboardData.items].find(i=>i.type.startsWith('image/'));
  if(f){e.preventDefault();load(f.getAsFile())}
 });
-async function pngBytes(size){
+async function imageBlob(size,type='image/png',quality=0.9){
  const c=document.createElement('canvas');c.width=c.height=size;
  const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
  const scale=Math.min(size/bitmap.width,size/bitmap.height);
  const w=bitmap.width*scale,h=bitmap.height*scale;
  ctx.drawImage(bitmap,(size-w)/2,(size-h)/2,w,h);
- const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('PNG encoding failed')),'image/png'));
- return new Uint8Array(await blob.arrayBuffer());
+ const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('Image encoding failed')),type,quality));
+ if(blob.type!==type)throw Error('This browser does not support '+type);
+ return blob;
 }
-async function makeIco(){
- const chunks=await Promise.all(sizes.map(pngBytes));
- const headerLength=6+16*sizes.length;
+async function pngBytes(size){
+ return new Uint8Array(await (await imageBlob(size)).arrayBuffer());
+}
+async function makeIco(selectedSizes=sizes){
+ const chunks=await Promise.all(selectedSizes.map(pngBytes));
+ const headerLength=6+16*selectedSizes.length;
  const total=headerLength+chunks.reduce((n,b)=>n+b.length,0);
  const bytes=new Uint8Array(total),view=new DataView(bytes.buffer);
- view.setUint16(0,0,true);view.setUint16(2,1,true);view.setUint16(4,sizes.length,true);
+ view.setUint16(0,0,true);view.setUint16(2,1,true);view.setUint16(4,selectedSizes.length,true);
  let offset=headerLength;
  chunks.forEach((chunk,i)=>{
-  const pos=6+i*16,s=sizes[i];bytes[pos]=s===256?0:s;bytes[pos+1]=s===256?0:s;
+  const pos=6+i*16,s=selectedSizes[i];bytes[pos]=s===256?0:s;bytes[pos+1]=s===256?0:s;
   bytes[pos+2]=0;bytes[pos+3]=0;view.setUint16(pos+4,1,true);view.setUint16(pos+6,32,true);
   view.setUint32(pos+8,chunk.length,true);view.setUint32(pos+12,offset,true);
   bytes.set(chunk,offset);offset+=chunk.length;
@@ -78,4 +116,35 @@ $('#download').onclick=async()=>{
   status('ICO downloaded · 7 sizes · transparency preserved');
  }catch(e){status('Error: '+e.message)}finally{btn.disabled=false}
 };
+function saveBlob(blob,name){
+ const url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download=name;document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+async function exportSingle(kind){
+ if(!bitmap)return;
+ const size=$('#size').value==='custom'?Number($('#customSize').value):Number($('#size').value),btn=$('#'+kind);
+ if(!Number.isInteger(size)||size<1||size>256){status('Enter a whole number from 1 to 256 px.');return;}
+ btn.disabled=true;status(`Generating ${size} × ${size} ${kind==='png'?'PNG':kind==='webp'?'WebP':'ICO'}…`);
+ try{
+  if(kind==='png'||kind==='webp'){
+   const ext=kind==='webp'?'webp':'png';
+   const blob=await imageBlob(size,kind==='webp'?'image/webp':'image/png');
+   saveBlob(blob,`icon-${size}.${ext}`);
+  }else{
+   saveBlob(await makeIco([size]),'favicon.ico');
+  }
+  status(`Downloaded ${kind==='png'?`icon-${size}.png`:kind==='webp'?`icon-${size}.webp`:'favicon.ico'} · ${size} × ${size} px`);
+ }catch(e){status('Error: '+e.message)}finally{btn.disabled=false}
+}
+function updateSize(){
+ const custom=$('#size').value==='custom';
+ $('#customSize').hidden=!custom;
+ $('#sizeText').textContent=custom?($('#customSize').value||'—'):$('#size').value;
+}
+$('#size').onchange=()=>{updateSize();if($('#size').value==='custom')$('#customSize').focus()};
+$('#customSize').oninput=updateSize;
+$('#singleIco').onclick=()=>exportSingle('singleIco');
+$('#png').onclick=()=>exportSingle('png');
+$('#webp').onclick=()=>exportSingle('webp');
 </script></body></html>
