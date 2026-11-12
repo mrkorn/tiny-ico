@@ -15,8 +15,8 @@
 .single-controls{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .single-controls label{color:#c5d2e9;white-space:nowrap}
 .single-controls select{min-width:105px}.single-controls input{width:90px;flex:none}.single-controls input[hidden]{display:none}
-.export-buttons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.export-buttons .btn{padding:12px 8px}
+.export-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.export-buttons .btn{padding:12px 8px;min-width:0;white-space:nowrap}
 @media(max-width:520px){.export-heading{align-items:flex-start;flex-direction:column;gap:4px}.export-heading .sizes{text-align:left}.export-buttons{grid-template-columns:1fr}.single-controls{justify-content:space-between}}
 </style>
 </head>
@@ -37,6 +37,7 @@
     <button class="btn" id="singleIco" disabled>Download ICO</button>
     <button class="btn" id="png" disabled>Download PNG</button>
     <button class="btn" id="webp" disabled>Download WebP</button>
+    <button class="btn" id="jpg" disabled>Download JPG</button>
   </div>
 </section>
 <div class="status" id="status" aria-live="polite"></div><footer>Local-only · No upload · Transparency preserved</footer>
@@ -55,7 +56,7 @@ async function load(file){
   previewUrl=URL.createObjectURL(file);
   const img=document.createElement('img');img.src=previewUrl;img.alt='Source image';
   $('#preview').replaceChildren(img);
-  for(const id of ['download','singleIco','png','webp'])$('#'+id).disabled=false;
+  for(const id of ['download','singleIco','png','webp','jpg'])$('#'+id).disabled=false;
   status(`Ready: ${bitmap.width} × ${bitmap.height} px`);
  }catch(e){status('Could not open image: '+e.message)}
 }
@@ -83,7 +84,8 @@ async function imageBlob(size,type='image/png',quality=0.9){
  const ctx=c.getContext('2d');ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
  const scale=Math.min(size/bitmap.width,size/bitmap.height);
  const w=bitmap.width*scale,h=bitmap.height*scale;
- ctx.drawImage(bitmap,(size-w)/2,(size-h)/2,w,h);
+ if(type==='image/jpeg'){ctx.fillStyle='#fff';ctx.fillRect(0,0,size,size);}
+  ctx.drawImage(bitmap,(size-w)/2,(size-h)/2,w,h);
  const blob=await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(Error('Image encoding failed')),type,quality));
  if(blob.type!==type)throw Error('This browser does not support '+type);
  return blob;
@@ -125,16 +127,16 @@ async function exportSingle(kind){
  if(!bitmap)return;
  const size=$('#size').value==='custom'?Number($('#customSize').value):Number($('#size').value),btn=$('#'+kind);
  if(!Number.isInteger(size)||size<1||size>256){status('Enter a whole number from 1 to 256 px.');return;}
- btn.disabled=true;status(`Generating ${size} × ${size} ${kind==='png'?'PNG':kind==='webp'?'WebP':'ICO'}…`);
+ btn.disabled=true;status(`Generating ${size} × ${size} ${kind==='png'?'PNG':kind==='webp'?'WebP':kind==='jpg'?'JPG':'ICO'}…`);
  try{
-  if(kind==='png'||kind==='webp'){
-   const ext=kind==='webp'?'webp':'png';
-   const blob=await imageBlob(size,kind==='webp'?'image/webp':'image/png');
+  if(kind==='png'||kind==='webp'||kind==='jpg'){
+   const ext=kind==='webp'?'webp':kind==='jpg'?'jpg':'png';
+   const blob=await imageBlob(size,kind==='webp'?'image/webp':kind==='jpg'?'image/jpeg':'image/png');
    saveBlob(blob,`icon-${size}.${ext}`);
   }else{
    saveBlob(await makeIco([size]),'favicon.ico');
   }
-  status(`Downloaded ${kind==='png'?`icon-${size}.png`:kind==='webp'?`icon-${size}.webp`:'favicon.ico'} · ${size} × ${size} px`);
+  status(`Downloaded ${kind==='png'?`icon-${size}.png`:kind==='webp'?`icon-${size}.webp`:kind==='jpg'?`icon-${size}.jpg`:'favicon.ico'} · ${size} × ${size} px`);
  }catch(e){status('Error: '+e.message)}finally{btn.disabled=false}
 }
 function updateSize(){
@@ -147,4 +149,5 @@ $('#customSize').oninput=updateSize;
 $('#singleIco').onclick=()=>exportSingle('singleIco');
 $('#png').onclick=()=>exportSingle('png');
 $('#webp').onclick=()=>exportSingle('webp');
+$('#jpg').onclick=()=>exportSingle('jpg');
 </script></body></html>
